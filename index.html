@@ -13,29 +13,40 @@
 <p>Recommended Tools:</p>
 
 <ul id="tools">
-  <li data-id="tool1">Tool 1</li>
-  <li data-id="tool2">Tool 2</li>
+  <li data-id="tool1"><a href="go/tool1.html">Tool 1</a></li>
+  <li data-id="tool2"><a href="go/tool2.html">Tool 2</a></li>
 </ul>
 
 <script>
 async function autoRank() {
-  // Fetch click counts from Worker API
-  const response = await fetch('https://YOUR_WORKER_URL/?getClicks=true');
-  const data = await response.json(); // { tool1: 5, tool2: 2 }
+  try {
+    const response = await fetch('https://anipromocore.terrell0780.workers.dev/?getClicks=true');
+    const data = await response.json(); // e.g., { "https://example.com": 3 }
 
-  const ul = document.getElementById('tools');
-  const items = Array.from(ul.children);
+    const ul = document.getElementById('tools');
+    const items = Array.from(ul.children);
 
-  // Sort by clicks descending
-  items.sort((a,b) => (data[b.dataset.id] || 0) - (data[a.dataset.id] || 0));
+    // Sort by clicks descending
+    items.sort((a,b) => {
+      const aUrl = a.querySelector('a').href;
+      const bUrl = b.querySelector('a').href;
+      return (data[aUrl] || 0) - (data[bUrl] || 0) ? (data[bUrl] || 0) - (data[aUrl] || 0) : 0;
+    });
 
-  // Reorder the list
-  ul.innerHTML = '';
-  items.forEach(item => ul.appendChild(item));
+    // Reorder the list
+    ul.innerHTML = '';
+    items.forEach(item => ul.appendChild(item));
+  } catch(e) {
+    console.log('Auto-rank error', e);
+  }
 }
 
 // Run on page load
 autoRank();
+</script>
+
+</body>
+</html>;
 </script>
 
 </body>
