@@ -12,10 +12,31 @@
 
 <p>Recommended Tools:</p>
 
-<ul>
-  <li><a href="go/tool1.html">Tool 1</a></li>
-  <li><a href="go/tool2.html">Tool 2</a></li>
+<ul id="tools">
+  <li data-id="tool1">Tool 1</li>
+  <li data-id="tool2">Tool 2</li>
 </ul>
+
+<script>
+async function autoRank() {
+  // Fetch click counts from Worker API
+  const response = await fetch('https://YOUR_WORKER_URL/?getClicks=true');
+  const data = await response.json(); // { tool1: 5, tool2: 2 }
+
+  const ul = document.getElementById('tools');
+  const items = Array.from(ul.children);
+
+  // Sort by clicks descending
+  items.sort((a,b) => (data[b.dataset.id] || 0) - (data[a.dataset.id] || 0));
+
+  // Reorder the list
+  ul.innerHTML = '';
+  items.forEach(item => ul.appendChild(item));
+}
+
+// Run on page load
+autoRank();
+</script>
 
 </body>
 </html>
